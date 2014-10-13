@@ -13,6 +13,7 @@
 #define CNP_SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 #define CNP_IS_IPAD   (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 
+#define CNP_BUTTON_TAG_OFFSET 53852
 
 typedef struct {
     CGFloat top;
@@ -42,17 +43,36 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
 
 @implementation CNPPopupController
 
+
 - (instancetype)initWithTitle:(NSAttributedString *)popupTitle
                      contents:(NSArray *)contents
                  buttonTitles:(NSArray *)buttonTitles
        destructiveButtonTitle:(NSAttributedString *)destructiveButtonTitle {
+
+    return [self initWithTitle:popupTitle
+                      contents:contents
+                  buttonTitles:buttonTitles
+                  buttonBlocks:nil
+        destructiveButtonTitle:destructiveButtonTitle
+        destructiveButtonBlock:nil];
+}
+
+- (instancetype)initWithTitle:(NSAttributedString *)popupTitle
+                     contents:(NSArray *)contents
+                 buttonTitles:(NSArray *)buttonTitles
+                 buttonBlocks:(NSArray *)buttonBlocks // Array of CNPPopupActionBlock's
+       destructiveButtonTitle:(NSAttributedString *)destructiveButtonTitle
+       destructiveButtonBlock:(CNPPopupActionBlock)destructiveButtonBlock {
+
     self = [super init];
     if (self) {
         _popupTitle = popupTitle;
         _contents = contents;
         _buttonTitles = buttonTitles;
+        _buttonBlocks = buttonBlocks;
         _destructiveButtonTitle = destructiveButtonTitle;
-        
+        _destructiveButtonBlock = destructiveButtonBlock;
+
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         
         // Safety Checks
@@ -149,8 +169,11 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
     }
     
     if (self.buttonTitles) {
-        for (NSAttributedString *string in self.buttonTitles) {
+        for (int i = 0; i < self.buttonTitles.count; ++i) {
+            NSAttributedString *string = [self.buttonTitles objectAtIndex:i];
             UIButton *button = [self buttonWithAttributedTitle:string];
+            button.tag = CNP_BUTTON_TAG_OFFSET + i;
+            [button addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
             [self.contentView addSubview:button];
         }
     }
@@ -172,7 +195,6 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
         
         if ([view isKindOfClass:[UIButton class]]) {
             [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:self.theme.buttonHeight]];
-            [((UIButton *)view) addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         }
         
         [view setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
@@ -198,7 +220,7 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
         [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:destructiveButton attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0]];
         [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:destructiveButton attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0]];
         [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:destructiveButton attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeRight multiplier:1.0 constant:0]];
-        [destructiveButton addTarget:self action:@selector(actionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        [destructiveButton addTarget:self action:@selector(destructiveActionButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     }
     
     [self.maskView addConstraint:[NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.maskView attribute:NSLayoutAttributeHeight multiplier:1.0 constant:0]];
@@ -237,7 +259,19 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
 }
 
 - (void)actionButtonPressed:(UIButton *)sender {
-    [self dismissPopupControllerAnimated:YES withButtonTitle:[sender attributedTitleForState:UIControlStateNormal].string];
+    if (self.buttonBlocks) {
+        [self dismissPopupControllerAnimated:YES withButtonIndex:(sender.tag - CNP_BUTTON_TAG_OFFSET)];
+    } else {
+        [self dismissPopupControllerAnimated:YES withButtonTitle:[sender attributedTitleForState:UIControlStateNormal].string];
+    }
+}
+
+- (void)destructiveActionButtonPressed:(UIButton *)sender {
+    if (self.destructiveButtonBlock) {
+        [self dismissPopupControllerWithDestructiveBlockAnimated:YES];
+    } else {
+        [self dismissPopupControllerAnimated:YES withButtonTitle:[sender attributedTitleForState:UIControlStateNormal].string];
+    }
 }
 
 #pragma mark - Presentation
@@ -288,17 +322,46 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
 }
 
 - (void)dismissPopupControllerAnimated:(BOOL)flag withButtonTitle:(NSString *)title {
+    [self setupConstraintsForDismissal];
 
+    if ([self.delegate respondsToSelector:@selector(popupController:willDismissWithButtonTitle:)]) {
+        [self.delegate popupController:self willDismissWithButtonTitle:title];
+    }
+
+    [self removeMaskAnimated:flag title:title];
+}
+
+- (void)dismissPopupControllerAnimated:(BOOL)flag withButtonIndex:(NSUInteger)index {
+    [self setupConstraintsForDismissal];
+
+    if (index < [self.buttonBlocks count]) {
+        CNPPopupActionBlock actionBlock = [self.buttonBlocks objectAtIndex:index];
+        actionBlock(index);
+    }
+
+    [self removeMaskAnimated:flag title:nil];
+}
+
+- (void)dismissPopupControllerWithDestructiveBlockAnimated:(BOOL)flag {
+    [self setupConstraintsForDismissal];
+
+    if (self.destructiveButtonBlock) {
+        self.destructiveButtonBlock(NSUIntegerMax);
+    }
+
+    [self removeMaskAnimated:flag title:nil];
+}
+
+- (void)setupConstraintsForDismissal {
     if (self.theme.dismissesOppositeDirection) {
         [self setDismissedConstraints];
     } else {
         [self setOriginConstraints];
     }
-    
-    if ([self.delegate respondsToSelector:@selector(popupController:willDismissWithButtonTitle:)]) {
-        [self.delegate popupController:self willDismissWithButtonTitle:title];
-    }
-    
+}
+
+- (void)removeMaskAnimated:(BOOL)flag title:(NSString *)title {
+
     [UIView animateWithDuration:flag ? 0.3f : 0.0f
                           delay:0
                         options:UIViewAnimationOptionCurveEaseInOut
@@ -312,7 +375,7 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
                          self.maskView = nil;
                          self.contentView = nil;
                          self.isShowing = NO;
-                         if ([self.delegate respondsToSelector:@selector(popupController:didDismissWithButtonTitle:)]) {
+                         if (title && [self.delegate respondsToSelector:@selector(popupController:didDismissWithButtonTitle:)]) {
                              [self.delegate popupController:self didDismissWithButtonTitle:title];
                          }
                      }];
