@@ -10,6 +10,8 @@
 
 #import "CNPPopupController.h"
 
+#define CNP_USE_BLOCKS 1
+
 @interface ViewController () <CNPPopupControllerDelegate>
 
 @end
@@ -41,8 +43,18 @@
     NSAttributedString *lineTwo = [[NSAttributedString alloc] initWithString:@"With style, using NSAttributedString" attributes:@{NSFontAttributeName : [UIFont systemFontOfSize:18], NSForegroundColorAttributeName : [UIColor colorWithRed:0.46 green:0.8 blue:1.0 alpha:1.0], NSParagraphStyleAttributeName : paragraphStyle}];
     
     NSAttributedString *buttonTitle = [[NSAttributedString alloc] initWithString:@"Close me" attributes:@{NSFontAttributeName : [UIFont boldSystemFontOfSize:18], NSForegroundColorAttributeName : [UIColor whiteColor], NSParagraphStyleAttributeName : paragraphStyle}];
-    
-    CNPPopupController *popupController = [[CNPPopupController alloc] initWithTitle:title contents:@[lineOne, icon, lineTwo] buttonTitles:@[buttonTitle] destructiveButtonTitle:nil];
+    CNPPopupActionBlock actionBlock = ^(NSUInteger selectedIndex){
+        NSLog(@"Dismissed with button index: %lu", (unsigned long)selectedIndex);
+    };
+
+    CNPPopupController *popupController;
+
+    if (CNP_USE_BLOCKS) {
+         popupController = [[CNPPopupController alloc] initWithTitle:title contents:@[lineOne, icon, lineTwo] buttonTitles:@[buttonTitle] buttonBlocks:@[actionBlock] destructiveButtonTitle:nil destructiveButtonBlock:nil];
+    } else {
+        popupController = [[CNPPopupController alloc] initWithTitle:title contents:@[lineOne, icon, lineTwo] buttonTitles:@[buttonTitle] destructiveButtonTitle:nil];
+    }
+
     popupController.theme = [CNPPopupTheme defaultTheme];
     popupController.theme.popupStyle = popupStyle;
     popupController.theme.presentationStyle = CNPPopupPresentationStyleSlideInFromTop;
