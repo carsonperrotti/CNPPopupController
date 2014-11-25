@@ -148,6 +148,59 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
                 [self.contentView addSubview:imageView];
                 [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:imageView attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0]];
             }
+			else if ([content isKindOfClass:[UIView class]]) {
+				
+				UIView *subView = (UIView *)content;
+				UIView *backView =  [[UIView alloc] init];
+				backView.backgroundColor = [UIColor clearColor];
+				[backView setTranslatesAutoresizingMaskIntoConstraints:NO];
+				[subView setTranslatesAutoresizingMaskIntoConstraints:NO];
+				[backView addSubview:subView];
+				[self.contentView addSubview:backView];
+				
+				[subView addConstraint:[NSLayoutConstraint constraintWithItem:subView
+																	attribute:NSLayoutAttributeWidth
+																	relatedBy:NSLayoutRelationEqual
+																	   toItem:nil
+																	attribute:NSLayoutAttributeWidth
+																   multiplier:1.0
+																	 constant:subView.bounds.size.width]];
+				
+				[subView addConstraint:[NSLayoutConstraint constraintWithItem:subView
+																	attribute:NSLayoutAttributeHeight
+																	relatedBy:NSLayoutRelationEqual
+																	   toItem:nil
+																	attribute:NSLayoutAttributeHeight
+																   multiplier:1.0
+																	 constant:subView.bounds.size.height]];
+				
+				[backView addConstraint:[NSLayoutConstraint constraintWithItem:backView
+																	 attribute:NSLayoutAttributeHeight
+																	 relatedBy:NSLayoutRelationEqual
+																		toItem:nil
+																	 attribute:NSLayoutAttributeHeight
+																	multiplier:1.0
+																	  constant:subView.bounds.size.height]];
+				
+				[backView addConstraint:[NSLayoutConstraint constraintWithItem:subView
+																	 attribute:NSLayoutAttributeCenterX
+																	 relatedBy:NSLayoutRelationEqual
+																		toItem:backView
+																	 attribute:NSLayoutAttributeCenterX
+																	multiplier:1.0
+																	  constant:0]];
+				
+				[backView addConstraint:[NSLayoutConstraint constraintWithItem:subView
+																	 attribute:NSLayoutAttributeCenterY
+																	 relatedBy:NSLayoutRelationEqual
+																		toItem:backView
+																	 attribute:NSLayoutAttributeCenterY
+																	multiplier:1.0
+																	  constant:0]];
+				
+				
+				
+			}
         }
     }
     
