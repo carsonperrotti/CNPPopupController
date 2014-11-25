@@ -84,6 +84,8 @@ typedef void(^SelectionHandler) (CNPPopupButtonItem *item);
 
 @property (nonatomic, strong) UIColor *backgroundColor; // Background color of the popup content view (Default white)
 @property (nonatomic, assign) CGFloat cornerRadius; // Corner radius of the popup content view (Default 6.0)
+@property (nonatomic, assign) CGFloat borderWidth;
+@property (nonatomic, assign) UIColor *borderColor;
 @property (nonatomic, assign) UIEdgeInsets popupContentInsets; // Inset of labels, images and buttons on the popup content view (Default 16.0 on all sides)
 @property (nonatomic, assign) CNPPopupStyle popupStyle; // How the popup looks once presented (Default centered)
 @property (nonatomic, assign) CNPPopupPresentationStyle presentationStyle; // How the popup is presented (Defauly slide in from bottom)

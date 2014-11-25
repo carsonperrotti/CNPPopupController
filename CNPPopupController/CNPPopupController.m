@@ -128,6 +128,8 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
     self.contentView.clipsToBounds = YES; 
     self.contentView.backgroundColor = self.theme.backgroundColor;
     self.contentView.layer.cornerRadius = self.theme.popupStyle == CNPPopupStyleCentered ? self.theme.cornerRadius : 0.0f;
+	self.contentView.layer.borderWidth = self.theme.borderWidth;
+	self.contentView.layer.borderColor = self.theme.borderColor.CGColor;
     [self.maskView addSubview:self.contentView];
     
     
@@ -146,10 +148,9 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
                 UIImageView *imageView = [self centeredImageViewForImage:(UIImage *)content];
                 [imageView sizeToFit];
                 [self.contentView addSubview:imageView];
-                [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:imageView attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0]];
+				[self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:imageView attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0]];
             }
 			else if ([content isKindOfClass:[UIView class]]) {
-				
 				UIView *subView = (UIView *)content;
 				UIView *backView =  [[UIView alloc] init];
 				backView.backgroundColor = [UIColor clearColor];
@@ -596,6 +597,8 @@ UIInterfaceOrientationMask UIInterfaceOrientationMaskFromOrientation(UIInterface
     CNPPopupTheme *defaultTheme = [[CNPPopupTheme alloc] init];
     defaultTheme.backgroundColor = [UIColor whiteColor];
     defaultTheme.cornerRadius = 6.0f;
+	defaultTheme.borderWidth = 0.0;
+	defaultTheme.borderColor = [UIColor darkGrayColor];
     defaultTheme.popupContentInsets = UIEdgeInsetsMake(16.0f, 16.0f, 16.0f, 16.0f);
     defaultTheme.popupStyle = CNPPopupStyleCentered;
     defaultTheme.presentationStyle = CNPPopupPresentationStyleSlideInFromBottom;
