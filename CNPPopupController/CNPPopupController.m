@@ -61,7 +61,7 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
         // Safety Checks
         if (contents) {
             for (id object in contents) {
-                NSAssert([object class] != [NSAttributedString class] || [object class] != [UIImage class],@"Contents can only be of NSAttributedString or UIImage class.");
+                NSAssert([object class] != [UIView class] || [object class] != [NSAttributedString class] || [object class] != [UIImage class],@"Contents can only be of NSAttributedString or UIImage class.");
             }
         }
         if (buttonItems) {
