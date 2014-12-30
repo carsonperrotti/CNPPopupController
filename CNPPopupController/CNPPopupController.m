@@ -61,11 +61,13 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
         // Safety Checks
         if (contents) {
             for (id object in contents) {
+				if (object == nil) {};
                 NSAssert([object class] != [UIView class] || [object class] != [NSAttributedString class] || [object class] != [UIImage class],@"Contents can only be of NSAttributedString or UIImage class.");
             }
         }
         if (buttonItems) {
             for (id object in buttonItems) {
+				if (object == nil) {};
                 NSAssert([object class] == [CNPPopupButtonItem class],@"Button items can only be of CNPPopupButtonItem.");
             }
         }
@@ -130,9 +132,11 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
     self.contentView.layer.cornerRadius = self.theme.popupStyle == CNPPopupStyleCentered ? self.theme.cornerRadius : 0.0f;
 	self.contentView.layer.borderWidth = self.theme.borderWidth;
 	self.contentView.layer.borderColor = self.theme.borderColor.CGColor;
+	
+	
     [self.maskView addSubview:self.contentView];
-    
-    
+
+	
     if (self.popupTitle) {
         UILabel *title = [self multilineLabelWithAttributedString:self.popupTitle];
         [self.contentView addSubview:title];
@@ -291,7 +295,8 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
         self.contentViewCenterXConstraint = [NSLayoutConstraint constraintWithItem:self.contentView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.maskView attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0];
         [self.maskView addConstraint:self.contentViewCenterXConstraint];
     }
-    
+	
+	
 }
 
 - (void)actionButtonPressed:(CNPPopupButton *)sender {
@@ -340,6 +345,12 @@ extern CNPTopBottomPadding CNPTopBottomPaddingMake(CGFloat top, CGFloat bottom) 
                              [self.delegate popupControllerDidPresent:self];
                          }
                      }];
+	
+	UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(self.contentView.bounds.size.width - 45, 5, 40, 40)];
+	[closeButton setImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
+	closeButton.userInteractionEnabled = NO;
+//	closeButton.backgroundColor = [UIColor blueColor];
+	[self.contentView addSubview:closeButton];
 }
 
 - (void)dismissPopupControllerAnimated:(BOOL)flag {
