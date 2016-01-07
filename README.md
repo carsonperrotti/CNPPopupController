@@ -20,7 +20,8 @@ Available in [Cocoa Pods](http://cocoapods.org/?q=CNPPopupController)
 
 ##Usage
 
-(See sample Xcode project in `/CNPPopupControllerExample`)
+See sample Xcode project in `/CNPPopupControllerExample`. For a **Swift** version of the example view controller [see this Gist](https://gist.github.com/lifeisfoo/fe3bc1cc94a137b697aa).
+
 
 ## Creating a Popup
 
