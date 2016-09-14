@@ -68,7 +68,7 @@ class ViewController: UIViewController {
         textField.borderStyle = UITextBorderStyle.RoundedRect
         textField.placeholder = "Custom view!"
         customView.addSubview(textField)
-        
+
         self.popupController = CNPPopupController(contents:[titleLabel, lineOneLabel, imageView, lineTwoLabel, customView, button])
         self.popupController.theme = CNPPopupTheme.defaultTheme()
         self.popupController.theme.popupStyle = popupStyle
@@ -91,7 +91,7 @@ class ViewController: UIViewController {
 
 extension ViewController : CNPPopupControllerDelegate {
     
-    func popupControllerWillDismiss(controller: CNPPopupController!) {
+    func popupControllerWillDismiss(controller: CNPPopupController) {
         print("Popup controller will be dismissed")
     }
     
