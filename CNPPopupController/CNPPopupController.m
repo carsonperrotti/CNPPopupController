@@ -203,6 +203,23 @@ CGFloat CNP_UIInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation orie
     return [self calculateContentSizeThatFits:size andUpdateLayout:NO];
 }
 
+- (CALayer *)buildCornerMaskLayer
+{
+    if (self.theme.popupTopCornerRadius < 0 || self.theme.popupStyle != CNPPopupStyleActionSheet) {
+        return nil;
+    }
+
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.popupView.bounds
+                                                   byRoundingCorners:(UIRectCornerTopLeft | UIRectCornerTopRight)
+                                                         cornerRadii:CGSizeMake(self.theme.popupTopCornerRadius,
+                                                                                self.theme.popupTopCornerRadius)];
+
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.popupView.bounds;
+    maskLayer.path  = maskPath.CGPath;
+    return maskLayer;
+}
+
 #pragma mark - Keyboard 
 
 - (void)keyboardWillShow:(NSNotification*)notification
@@ -265,6 +282,7 @@ CGFloat CNP_UIInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation orie
     self.popupView.center = [self originPoint];
     [self.applicationWindow addSubview:self.maskView];
     self.maskView.alpha = 0;
+    self.popupView.layer.mask = [self buildCornerMaskLayer];
     [UIView animateWithDuration:flag?self.theme.animationDuration:0.0 animations:^{
         self.maskView.alpha = 1.0;
         self.popupView.center = [self endingPoint];;
@@ -285,6 +303,7 @@ CGFloat CNP_UIInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation orie
         self.popupView.center = [self dismissedPoint];;
     } completion:^(BOOL finished) {
         [self.maskView removeFromSuperview];
+        self.popupView.layer.mask = nil;
         if ([self.delegate respondsToSelector:@selector(popupControllerDidDismiss:)]) {
             [self.delegate popupControllerDidDismiss:self];
         }
@@ -424,6 +443,7 @@ CGFloat CNP_UIInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation orie
     defaultTheme.contentVerticalPadding = 16.0f;
     defaultTheme.maxPopupWidth = 300.0f;
     defaultTheme.animationDuration = 0.3f;
+    defaultTheme.popupTopCornerRadius = 0.0f;
     return defaultTheme;
 }
 

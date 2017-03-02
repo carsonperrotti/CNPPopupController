@@ -65,6 +65,8 @@ A `CNPPopupTheme` instance can be created and assigned to the `theme` property o
 
 `@property (nonatomic, assign) CGFloat animationDuration;`
 
+`@property (nonatomic, assign) CGFloat popupTopCornerRadius;`
+
 ## Notes
 
 ### Deployment

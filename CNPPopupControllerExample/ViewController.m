@@ -66,6 +66,7 @@
     self.popupController = [[CNPPopupController alloc] initWithContents:@[titleLabel, lineOneLabel, imageView, lineTwoLabel, customView, button]];
     self.popupController.theme = [CNPPopupTheme defaultTheme];
     self.popupController.theme.popupStyle = popupStyle;
+    self.popupController.theme.popupTopCornerRadius = 12.0f;
     self.popupController.delegate = self;
     [self.popupController presentPopupControllerAnimated:YES];
 }
