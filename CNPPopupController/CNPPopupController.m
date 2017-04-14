@@ -209,7 +209,7 @@ CGFloat CNP_UIInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation orie
 {
     if (self.theme.movesAboveKeyboard) {
         CGRect frame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-        frame = [self.popupView convertRect:frame fromView:nil];
+        frame = [self.maskView convertRect:frame fromView:nil];
         NSTimeInterval duration = [(notification.userInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
         UIViewAnimationCurve curve = [(notification.userInfo)[UIKeyboardAnimationCurveUserInfoKey] integerValue];
         
@@ -234,7 +234,7 @@ CGFloat CNP_UIInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation orie
 {
     if (self.theme.movesAboveKeyboard) {
         CGRect frame = [notification.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-        frame = [self.popupView convertRect:frame fromView:nil];
+        frame = [self.maskView convertRect:frame fromView:nil];
         NSTimeInterval duration = [(notification.userInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
         UIViewAnimationCurve curve = [(notification.userInfo)[UIKeyboardAnimationCurveUserInfoKey] integerValue];
         
