@@ -1,10 +1,10 @@
-#CNPPopupController
+# CNPPopupController
 [![Pod Version](http://img.shields.io/cocoapods/v/CNPPopupController.svg?style=flat)](http://cocoadocs.org/docsets/CNPPopupController/)
 [![Pod Platform](http://img.shields.io/cocoapods/p/CNPPopupController.svg?style=flat)](http://cocoadocs.org/docsets/CNPPopupController/)
 [![Pod License](http://img.shields.io/cocoapods/l/CNPPopupController.svg?style=flat)](https://github.com/carsonperrotti/CNPPopupController/blob/master/LICENSE)
 [![Dependency Status](https://www.versioneye.com/objective-c/cnppopupcontroller/0.2.1/badge.svg?style=flat)](https://www.versioneye.com/objective-c/cnppopupcontroller)
 
-##Introduction
+## Introduction
 
 CNPPopupController is a simple and versatile class for presenting a custom popup in a variety of fashions. It includes a many options for controlling how your popup appears and behaves.
 
@@ -18,7 +18,7 @@ Available in [CocoaPods](http://cocoapods.org/?q=CNPPopupController)
 
 `pod 'CNPPopupController'`
 
-##Usage
+## Usage
 
 (See sample Xcode project in `/CNPPopupControllerExample`)
 
@@ -70,10 +70,10 @@ A `CNPPopupTheme` instance can be created and assigned to the `theme` property o
 ### Deployment
 `CNPPopupController ` works on **iOS 6 - iOS 10**
 
-##Credits
+## Credits
 CNPPopupController was created by [Carson Perrotti](http://carsonperrotti.com)
 
-##Version History
+## Version History
 
 **September 15, 2016 v0.3.3**
 - Content layout fixes
