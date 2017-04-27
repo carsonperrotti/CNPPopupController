@@ -29,6 +29,9 @@ static inline UIViewAnimationOptions UIViewAnimationCurveToAnimationOptions(UIVi
 
 @implementation CNPPopupController
 
+- (void)hidden:(BOOL)flag{
+    self.popupView.hidden = flag;
+}
 
 - (instancetype)initWithContents:(NSArray <UIView *> *)contents {
     self = [super init];
