@@ -21,6 +21,7 @@
 
 - (void)presentPopupControllerAnimated:(BOOL)flag;
 - (void)dismissPopupControllerAnimated:(BOOL)flag;
+- (void)hidden:(BOOL)flag;
 
 @end
 
