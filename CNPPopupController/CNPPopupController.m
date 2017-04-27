@@ -31,6 +31,7 @@ static inline UIViewAnimationOptions UIViewAnimationCurveToAnimationOptions(UIVi
 
 - (void)hidden:(BOOL)flag{
     self.popupView.hidden = flag;
+    self.maskView.hidden = flag;
 }
 
 - (instancetype)initWithContents:(NSArray <UIView *> *)contents {
